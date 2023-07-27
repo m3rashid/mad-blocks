@@ -10,13 +10,13 @@
         const senderAddressInput = document.getElementById('senderAddress');
         const submitBtn = document.getElementById('send_money_button');
         const amountInput = document.getElementById('send_amount');
+        const walletAmount = document.getElementById('wallet_amount');
+        const reloadWalletBtn = document.getElementById('reload_wallet');
         const recipientAddress = document.getElementById(
           'recipient_blockchain_address'
         );
 
-        fetch('/wallet', {
-          method: 'POST',
-        })
+        fetch('/wallet', { method: 'POST' })
           .then((res) => {
             if (!res.ok) throw new Error('Error in getting wallet');
             return res.json();
@@ -53,6 +53,20 @@
             })
             .catch(console.log);
         });
+        reloadWalletBtn.addEventListener('click', () => {
+          const walletAddress = senderAddressInput.innerHTML;
+          fetch(`/wallet/amount?address=${walletAddress}`, { method: 'GET' })
+            .then((res) => {
+              if (!res.ok) throw new Error('Error in getting wallet');
+              return res.json();
+            })
+            .then((res) => {
+              if (res.message === 'success') {
+                walletAmount.innerHTML = res.amount;
+              } else walletAmount.innerHTML = 0;
+            })
+            .catch(console.log);
+        });
       };
     </script>
 
@@ -65,6 +79,8 @@
   <body>
     <div>
       <h1>Wallet</h1>
+
+      <span>Amount: </span>
       <span id="wallet_amount">0</span> &nbsp;&nbsp;
       <button id="reload_wallet">Reload Wallet</button>
 
