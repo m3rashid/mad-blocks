@@ -3,7 +3,6 @@ package utils
 import (
 	"fmt"
 	"net"
-	"os"
 	"regexp"
 	"strconv"
 	"time"
@@ -11,8 +10,7 @@ import (
 
 func IsFoundHost(host string, port uint16) bool {
 	target := fmt.Sprintf("%s:%d", host, port)
-
-	_, err := net.DialTimeout("tcp", target, 1*time.Second)
+	_, err := net.DialTimeout("tcp", target, 2*time.Second)
 	if err != nil {
 		fmt.Printf("%s %v\n", target, err)
 		return false
@@ -31,12 +29,14 @@ func FindNeighbors(myHost string, myPort uint16, startIp uint8, endIp uint8, sta
 
 	prefixHost := m[1]
 	lastIp, _ := strconv.Atoi(m[len(m)-1])
+
 	neighbors := make([]string, 0)
 
 	for port := startPort; port <= endPort; port++ {
 		for ip := startIp; ip <= endIp; ip++ {
 			guessHost := fmt.Sprintf("%s%d", prefixHost, lastIp+int(ip))
 			guessTarget := fmt.Sprintf("%s:%d", guessHost, port)
+
 			if guessTarget != address && IsFoundHost(guessHost, port) {
 				neighbors = append(neighbors, guessTarget)
 			}
@@ -47,16 +47,17 @@ func FindNeighbors(myHost string, myPort uint16, startIp uint8, endIp uint8, sta
 }
 
 func GetHost() string {
-	hostName, err := os.Hostname()
-	fmt.Println("HOSTNAME: ", hostName)
-	if err != nil {
-		return "127.0.0.1"
-	}
+	// hostName, err := os.Hostname()
+	// if err != nil {
+	// 	return "127.0.0.1"
+	// }
 
-	address, err := net.LookupHost(hostName)
-	if err != nil {
-		return "127.0.0.1"
-	}
-	fmt.Println("ADDRESS: ", hostName)
-	return address[0]
+	// address, err := net.LookupIP(hostName)
+	// if err != nil {
+	// 	return "127.0.0.1"
+	// }
+	// // fmt.Println("ADDRESS: ", address[0])
+	// returnAddr := address[0].String()
+	// return returnAddr
+	return "127.0.0.1"
 }

@@ -21,7 +21,6 @@ type BlockChain struct {
 }
 
 func (bc *BlockChain) Run() {
-	bc.StartMining()
 	bc.StartSyncNeighbors()
 }
 
@@ -34,7 +33,7 @@ func (bc *BlockChain) SetNeighbors() {
 		utils.BLOCKCHAIN_PORT_RANGE_START,
 		utils.BLOCKCHAIN_PORT_RANGE_END,
 	)
-	log.Printf("%v", bc.neighbors)
+	log.Printf("Neighbors: %v", bc.neighbors)
 }
 
 func (bc *BlockChain) SyncNeighbors() {
