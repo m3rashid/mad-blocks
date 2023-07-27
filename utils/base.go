@@ -10,7 +10,7 @@ const (
 	MINING_SENDER                   = "MadBlocks"
 	MINING_REWARD                   = 0.5
 	VERBOSE                         = true
-	MINING_TIMER_SECONDS            = 20
+	MINING_TIMER_SECONDS            = 50
 	BLOCKCHAIN_PORT_RANGE_START     = 5000
 	BLOCKCHAIN_PORT_RANGE_END       = 5003
 	NEIGHBOR_IP_RANGE_START         = 0
