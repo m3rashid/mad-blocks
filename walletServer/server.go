@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	TEMP_DIR = "wallet_server/templates"
+	// TEMP_DIR = "walletServer/templates"
+	TEMP_DIR = "templates"
 )
 
 type WalletServer struct {
@@ -34,7 +35,7 @@ func (ws *WalletServer) Gateway() string {
 func (ws *WalletServer) Index(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodGet:
-		t, _ := template.ParseFiles(path.Join("templates", "index.html"))
+		t, _ := template.ParseFiles(path.Join(TEMP_DIR, "index.html"))
 		t.Execute(w, "")
 	default:
 		log.Println("ERROR: Invalid HTTP Method")

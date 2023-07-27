@@ -11,6 +11,7 @@ type BlockChain struct {
 	transactionPool []*Transaction
 	chain           []*Block
 	address         string
+	port            uint16
 }
 
 func (bc *BlockChain) CreateBlock(nonce int, previousHash [32]byte) *Block {
@@ -20,10 +21,11 @@ func (bc *BlockChain) CreateBlock(nonce int, previousHash [32]byte) *Block {
 	return b
 }
 
-func NewBlockChain(address string) *BlockChain {
+func NewBlockChain(address string, port uint16) *BlockChain {
 	b := &Block{}
 	bc := new(BlockChain)
 	bc.address = address
+	bc.port = port
 	bc.CreateBlock(0, b.Hash())
 	return bc
 }

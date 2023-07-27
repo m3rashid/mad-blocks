@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"mad-blocks/block"
@@ -28,7 +27,7 @@ func (bcs *BlockchainServer) GetBlockchain() *block.BlockChain {
 	bc, ok := cache["blockchain"]
 	if !ok {
 		minerWallet := wallet.NewWallet()
-		bc = block.NewBlockChain(minerWallet.Address())
+		bc = block.NewBlockChain(minerWallet.Address(), bcs.Port())
 		cache["blockchain"] = bc
 	}
 
@@ -40,17 +39,12 @@ func (bcs *BlockchainServer) GetChain(w http.ResponseWriter, req *http.Request) 
 	case http.MethodGet:
 		bc := bcs.GetBlockchain()
 		m, _ := bc.MarshalJSON()
-		fmt.Println(string(m[:]))
+		// fmt.Println(string(m[:]))
 		w.Header().Add("Content-Type", "application/json")
 		io.WriteString(w, string(m[:]))
 	default:
 		log.Println("ERROR: Invalid HTTP Method")
 	}
-
-}
-
-func HelloWorld(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Hello, world")
 }
 
 func (bcs *BlockchainServer) Run() {
