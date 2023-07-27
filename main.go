@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -28,7 +29,35 @@ func (b *Block) Print() {
 	fmt.Printf("timestamp:\t%d\n", b.timestamp)
 }
 
+type BlockChain struct {
+	chain           []*Block
+	transactionPool []string
+}
+
+func (bc *BlockChain) createBlock(nonce int, previousHash string) *Block {
+	b := newBlock(nonce, previousHash)
+	bc.chain = append(bc.chain, b)
+	return b
+}
+
+func (bc *BlockChain) Print() {
+	for i, block := range bc.chain {
+		fmt.Printf("%s Block %d %s\n", strings.Repeat("=", 20), i, strings.Repeat("=", 20))
+		block.Print()
+	}
+	fmt.Println()
+	fmt.Println()
+}
+
+func NewBlockChain() *BlockChain {
+	bc := &BlockChain{}
+	bc.createBlock(1, "init_hash")
+	return bc
+}
+
 func main() {
-	b := newBlock(1, "hash")
-	b.Print()
+	blockChain := NewBlockChain()
+	blockChain.Print()
+	blockChain.createBlock(2, "hash_1")
+	blockChain.Print()
 }
