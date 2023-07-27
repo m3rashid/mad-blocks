@@ -23,10 +23,10 @@ func (bc *BlockChain) VerifyTransactionSignature(
 func (bc *BlockChain) validProof(nonce int, previousHash [32]byte, transactions []*Transaction, difficulty int, defaultParams utils.DefaultFuncParamsType) bool {
 	zeroes := strings.Repeat("0", difficulty)
 	guessBlock := Block{
-		Timestamp:    0,
-		Nonce:        nonce,
-		PreviousHash: previousHash,
-		Transactions: transactions,
+		timestamp:    0,
+		nonce:        nonce,
+		previousHash: previousHash,
+		transactions: transactions,
 	}
 	guessHash := fmt.Sprintf("%x", guessBlock.hash())
 	matched := guessHash[:difficulty] == zeroes

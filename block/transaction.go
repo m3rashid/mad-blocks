@@ -2,6 +2,7 @@ package block
 
 import (
 	"crypto/ecdsa"
+	"encoding/json"
 	"fmt"
 	"log"
 	"mad-blocks/utils"
@@ -9,16 +10,28 @@ import (
 )
 
 type Transaction struct {
-	Sender    string  `json:"sender"`
-	Recipient string  `json:"recipient"`
-	Value     float32 `json:"value"`
+	sender    string
+	recipient string
+	value     float32
+}
+
+func (tr *Transaction) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Sender    string  `json:"sender_blockchain_address"`
+		Recipient string  `json:"recipient_blockchain_address"`
+		Value     float32 `json:"value"`
+	}{
+		Sender:    tr.sender,
+		Recipient: tr.recipient,
+		Value:     tr.value,
+	})
 }
 
 func NewTransaction(sender string, recipient string, value float32) *Transaction {
 	return &Transaction{
-		Sender:    sender,
-		Recipient: recipient,
-		Value:     value,
+		sender:    sender,
+		recipient: recipient,
+		value:     value,
 	}
 }
 
@@ -32,17 +45,17 @@ func (bc *BlockChain) AddTransaction(
 	t := NewTransaction(sender, recipient, value)
 
 	if sender == utils.MINING_SENDER {
-		bc.TransactionPool = append(bc.TransactionPool, t)
+		bc.transactionPool = append(bc.transactionPool, t)
 		return true
 	}
 
 	// if bc.BalanceOf(sender) < value {
-	// 	log.Println("ERROR: No balance")
+	// 	log.Println("Insufficient Balance")
 	// 	return false
 	// }
 
 	if bc.VerifyTransactionSignature(senderPublicKey, signature, t) {
-		bc.TransactionPool = append(bc.TransactionPool, t)
+		bc.transactionPool = append(bc.transactionPool, t)
 		return true
 	} else {
 		log.Println("Cannot Verify Transaction")
@@ -52,7 +65,7 @@ func (bc *BlockChain) AddTransaction(
 
 func (t *Transaction) Print() {
 	fmt.Println(strings.Repeat("-", 50))
-	fmt.Printf("Sender: %s, ", t.Sender)
-	fmt.Printf("Recipient: %s, ", t.Recipient)
-	fmt.Printf("Value: %.1f\n", t.Value)
+	fmt.Printf("Sender: %s, ", t.sender)
+	fmt.Printf("Recipient: %s, ", t.recipient)
+	fmt.Printf("Value: %.1f\n", t.value)
 }

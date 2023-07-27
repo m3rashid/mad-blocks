@@ -5,6 +5,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 
 	"github.com/btcsuite/btcutil/base58"
@@ -12,22 +13,34 @@ import (
 )
 
 type Wallet struct {
-	PrivateKey *ecdsa.PrivateKey
-	PublicKey  *ecdsa.PublicKey
-	Address    string
+	privateKey *ecdsa.PrivateKey
+	publicKey  *ecdsa.PublicKey
+	address    string
+}
+
+func (w *Wallet) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		PrivateKey        string `json:"privateKey"`
+		PublicKey         string `json:"publicKey"`
+		BlockchainAddress string `json:"blockchainAddress"`
+	}{
+		PrivateKey:        w.PrivateKeyStr(),
+		PublicKey:         w.PublicKeyStr(),
+		BlockchainAddress: w.address,
+	})
 }
 
 func NewWallet() *Wallet {
 	w := new(Wallet)
 	privateKey, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	w.PrivateKey = privateKey
+	w.privateKey = privateKey
 
-	w.PublicKey = &w.PrivateKey.PublicKey
+	w.publicKey = &w.privateKey.PublicKey
 
 	// 2. Perform SHA256 hashing on the public key (32 bytes)
 	h2 := sha256.New()
-	h2.Write(w.PublicKey.X.Bytes())
-	h2.Write(w.PublicKey.Y.Bytes())
+	h2.Write(w.publicKey.X.Bytes())
+	h2.Write(w.publicKey.Y.Bytes())
 	digest2 := h2.Sum(nil)
 
 	// 3. Perform RIPEMD160 hashing on the result of SHA256 (20 bytes)
@@ -60,15 +73,27 @@ func NewWallet() *Wallet {
 
 	// 9. Convert the string from byte to base58
 	address := base58.Encode(dc8)
-	w.Address = address
+	w.address = address
 
 	return w
 }
 
+func (w *Wallet) PublicKey() *ecdsa.PublicKey {
+	return w.publicKey
+}
+
 func (w *Wallet) PublicKeyStr() string {
-	return fmt.Sprintf("%x%x", w.PublicKey.X.Bytes(), w.PublicKey.Y.Bytes())
+	return fmt.Sprintf("%x%x", w.publicKey.X.Bytes(), w.publicKey.Y.Bytes())
+}
+
+func (w *Wallet) PrivateKey() *ecdsa.PrivateKey {
+	return w.privateKey
 }
 
 func (w *Wallet) PrivateKeyStr() string {
-	return fmt.Sprintf("%x", w.PrivateKey.D.Bytes())
+	return fmt.Sprintf("%x", w.privateKey.D.Bytes())
+}
+
+func (w *Wallet) Address() string {
+	return w.address
 }
