@@ -1,5 +1,5 @@
 run:
-	go run *.go
+	go run main.go
 
 build:
 	go build -o bin/madBlocks main.go

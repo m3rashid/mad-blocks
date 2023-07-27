@@ -7,6 +7,10 @@ const (
 	VERBOSE           = true
 )
 
-type DefaultFuncParams struct {
+type DefaultFuncParamsType struct {
 	Verbose bool `json:"verbose"`
+}
+
+var DefaultFuncParams = DefaultFuncParamsType{
+	Verbose: true,
 }

@@ -45,7 +45,7 @@ func (bc *BlockChain) LastBlock() *Block {
 	return bc.Chain[len(bc.Chain)-1]
 }
 
-func (bc *BlockChain) Mining(defaultParams utils.DefaultFuncParams) bool {
+func (bc *BlockChain) Mining(defaultParams utils.DefaultFuncParamsType) bool {
 	bc.AddTransaction(utils.MINING_SENDER, bc.Address, utils.MINING_REWARD)
 	nonce := bc.ProofOfWork(defaultParams)
 	previousHash := bc.LastBlock().hash()
