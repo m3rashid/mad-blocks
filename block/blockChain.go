@@ -15,6 +15,36 @@ type BlockChain struct {
 	address         string
 	port            uint16
 	mux             sync.Mutex
+	neighbors       []string
+	muxNeighbors    sync.Mutex
+}
+
+func (bc *BlockChain) Run() {
+	bc.StartMining()
+	bc.StartSyncNeighbors()
+}
+
+func (bc *BlockChain) SetNeighbors() {
+	bc.neighbors = utils.FindNeighbors(
+		utils.GetHost(),
+		bc.port,
+		utils.NEIGHBOR_IP_RANGE_START,
+		utils.NEIGHBOR_IP_RANGE_END,
+		utils.BLOCKCHAIN_PORT_RANGE_START,
+		utils.BLOCKCHAIN_PORT_RANGE_END,
+	)
+}
+
+func (bc *BlockChain) SyncNeighbors() {
+	bc.muxNeighbors.Lock()
+	defer bc.muxNeighbors.Unlock()
+
+	bc.SetNeighbors()
+}
+
+func (bc *BlockChain) StartSyncNeighbors() {
+	bc.SyncNeighbors()
+	_ = time.AfterFunc(time.Second*utils.NEIGHBORS_SYNC_TIME_SET_SECONDS, bc.StartSyncNeighbors)
 }
 
 func (bc *BlockChain) TransactionPool() []*Transaction {
