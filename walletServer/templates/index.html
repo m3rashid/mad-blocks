@@ -3,72 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <title>Wallet</title>
-    <script>
-      window.onload = function () {
-        const publicKeyInput = document.getElementById('publicKey');
-        const privateKeyInput = document.getElementById('privateKey');
-        const senderAddressInput = document.getElementById('senderAddress');
-        const submitBtn = document.getElementById('send_money_button');
-        const amountInput = document.getElementById('send_amount');
-        const walletAmount = document.getElementById('wallet_amount');
-        const reloadWalletBtn = document.getElementById('reload_wallet');
-        const recipientAddress = document.getElementById(
-          'recipient_blockchain_address'
-        );
-
-        fetch('/wallet', { method: 'POST' })
-          .then((res) => {
-            if (!res.ok) throw new Error('Error in getting wallet');
-            return res.json();
-          })
-          .then((res) => {
-            senderAddressInput.innerHTML = res.address;
-            publicKeyInput.innerHTML = res.publicKey;
-            privateKeyInput.innerHTML = res.privateKey;
-          })
-          .catch(console.log);
-
-        submitBtn.addEventListener('click', () => {
-          const body = {
-            senderPrivateKey: privateKeyInput.innerHTML,
-            senderAddress: senderAddressInput.innerHTML,
-            recipientAddress: recipientAddress.value,
-            senderPublicKey: publicKeyInput.innerHTML,
-            value: amountInput.value,
-          };
-
-          fetch('/transaction', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-          })
-            .then((res) => {
-              if (!res.ok) throw new Error('Error in getting wallet');
-              return res.json();
-            })
-            .then((res) => {
-              if (res.message === 'success') {
-                window.alert('Transaction Successful');
-              } else window.alert('Transaction Failed');
-            })
-            .catch(console.log);
-        });
-        reloadWalletBtn.addEventListener('click', () => {
-          const walletAddress = senderAddressInput.innerHTML;
-          fetch(`/wallet/amount?address=${walletAddress}`, { method: 'GET' })
-            .then((res) => {
-              if (!res.ok) throw new Error('Error in getting wallet');
-              return res.json();
-            })
-            .then((res) => {
-              if (res.message === 'success') {
-                walletAmount.innerHTML = res.amount;
-              } else walletAmount.innerHTML = 0;
-            })
-            .catch(console.log);
-        });
-      };
-    </script>
 
     <style>
       body {
@@ -117,5 +51,73 @@
         <button id="send_money_button">Send</button>
       </div>
     </div>
+
+    <script>
+      // window.onload = function () {
+      const publicKeyInput = document.getElementById('publicKey');
+      const privateKeyInput = document.getElementById('privateKey');
+      const senderAddressInput = document.getElementById('senderAddress');
+      const submitBtn = document.getElementById('send_money_button');
+      const amountInput = document.getElementById('send_amount');
+      const walletAmount = document.getElementById('wallet_amount');
+      const reloadWalletBtn = document.getElementById('reload_wallet');
+      const recipientAddress = document.getElementById(
+        'recipient_blockchain_address'
+      );
+
+      fetch('/wallet', { method: 'POST' })
+        .then((res) => {
+          if (!res.ok) throw new Error('Error in getting wallet');
+          return res.json();
+        })
+        .then((res) => {
+          senderAddressInput.innerHTML = res.address;
+          publicKeyInput.innerHTML = res.publicKey;
+          privateKeyInput.innerHTML = res.privateKey;
+        })
+        .catch(console.log);
+
+      submitBtn.addEventListener('click', () => {
+        const body = {
+          senderPrivateKey: privateKeyInput.innerHTML,
+          senderAddress: senderAddressInput.innerHTML,
+          recipientAddress: recipientAddress.value,
+          senderPublicKey: publicKeyInput.innerHTML,
+          value: amountInput.value,
+        };
+
+        fetch('/transaction', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error('Error in getting wallet');
+            return res.json();
+          })
+          .then((res) => {
+            if (res.message === 'success') {
+              window.alert('Transaction Successful');
+            } else window.alert('Transaction Failed');
+          })
+          .catch(console.log);
+      });
+
+      reloadWalletBtn.addEventListener('click', () => {
+        const walletAddress = senderAddressInput.innerHTML;
+        fetch(`/wallet/amount?address=${walletAddress}`, { method: 'GET' })
+          .then((res) => {
+            if (!res.ok) throw new Error('Error in getting wallet');
+            return res.json();
+          })
+          .then((res) => {
+            if (res.message === 'success') {
+              walletAmount.innerHTML = res.amount;
+            } else walletAmount.innerHTML = 0;
+          })
+          .catch(console.log);
+      });
+      // };
+    </script>
   </body>
 </html>
