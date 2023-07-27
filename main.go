@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"mad-blocks/block"
+	"mad-blocks/utils"
 	"mad-blocks/wallet"
 )
 
@@ -11,11 +13,20 @@ func init() {
 }
 
 func main() {
-	w := wallet.NewWallet()
-	fmt.Printf("Public Key: %s\n", w.PublicKeyStr())
-	fmt.Printf("Private Key: %s\n", w.PrivateKeyStr())
+	userA := wallet.NewWallet()
+	userB := wallet.NewWallet()
+	miner := wallet.NewWallet()
 
-	fmt.Println("Address: ", w.Address)
-	t := w.NewTransaction(w.PrivateKey, w.PublicKey, w.Address, "recipient", 1.0)
-	fmt.Printf("Signature %s\n", t.GenerateSignature())
+	t := wallet.NewTransaction(userA.PrivateKey, userA.PublicKey, userA.Address, userB.Address, 1.0)
+
+	blockchain := block.NewBlockChain(miner.Address)
+	isAdded := blockchain.AddTransaction(userA.Address, userB.Address, 1.0, userA.PublicKey, t.GenerateSignature())
+	fmt.Println("Added: ", isAdded)
+
+	blockchain.Mining(utils.DefaultFuncParams)
+	blockchain.Print()
+
+	fmt.Println("UserA: ", blockchain.BalanceOf(userA.Address))
+	fmt.Println("UserB: ", blockchain.BalanceOf(userB.Address))
+	fmt.Println("Miner: ", blockchain.BalanceOf(miner.Address))
 }

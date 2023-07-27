@@ -1,18 +1,23 @@
 package block
 
 import (
+	"crypto/ecdsa"
+	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"mad-blocks/utils"
 	"strings"
 	"time"
 )
 
-func (bc *BlockChain) copyTransactionPool() []*Transaction {
-	transactions := make([]*Transaction, 0)
-	for _, transaction := range bc.TransactionPool {
-		transactions = append(transactions, NewTransaction(transaction.Sender, transaction.Recipient, transaction.Value))
-	}
-	return transactions
+func (bc *BlockChain) VerifyTransactionSignature(
+	senderPublicKey *ecdsa.PublicKey,
+	signature *utils.Signature,
+	transaction *Transaction,
+) bool {
+	m, _ := json.Marshal(transaction)
+	hash := sha256.Sum256(m)
+	return ecdsa.Verify(senderPublicKey, hash[:], signature.R, signature.S)
 }
 
 func (bc *BlockChain) validProof(nonce int, previousHash [32]byte, transactions []*Transaction, difficulty int, defaultParams utils.DefaultFuncParamsType) bool {

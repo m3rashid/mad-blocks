@@ -72,13 +72,3 @@ func (w *Wallet) PublicKeyStr() string {
 func (w *Wallet) PrivateKeyStr() string {
 	return fmt.Sprintf("%x", w.PrivateKey.D.Bytes())
 }
-
-func (w *Wallet) NewTransaction(privateKey *ecdsa.PrivateKey, publicKey *ecdsa.PublicKey, sender string, recipient string, value float32) *Transaction {
-	return &Transaction{
-		SenderPrivateKey: privateKey,
-		SenderPublicKey:  publicKey,
-		Sender:           sender,
-		Recipient:        recipient,
-		Value:            value,
-	}
-}

@@ -12,5 +12,5 @@ type DefaultFuncParamsType struct {
 }
 
 var DefaultFuncParams = DefaultFuncParamsType{
-	Verbose: true,
+	Verbose: false,
 }

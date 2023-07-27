@@ -5,9 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"mad-blocks/utils"
-	"strings"
 )
 
 type Transaction struct {
@@ -18,13 +16,6 @@ type Transaction struct {
 	Value            float32 `json:"value"`
 }
 
-func (t *Transaction) Print() {
-	fmt.Println(strings.Repeat("-", 50))
-	fmt.Printf("Sender: %s, ", t.Sender)
-	fmt.Printf("Recipient: %s, ", t.Recipient)
-	fmt.Printf("Value: %f\n", t.Value)
-}
-
 func (t *Transaction) GenerateSignature() *utils.Signature {
 	m, _ := json.Marshal(t)
 	h := sha256.Sum256(m)
@@ -32,5 +23,21 @@ func (t *Transaction) GenerateSignature() *utils.Signature {
 	return &utils.Signature{
 		R: r,
 		S: s,
+	}
+}
+
+func NewTransaction(
+	senderPrivateKey *ecdsa.PrivateKey,
+	senderPublicKey *ecdsa.PublicKey,
+	sender string,
+	recipient string,
+	value float32,
+) *Transaction {
+	return &Transaction{
+		SenderPrivateKey: senderPrivateKey,
+		SenderPublicKey:  senderPublicKey,
+		Sender:           sender,
+		Recipient:        recipient,
+		Value:            value,
 	}
 }
