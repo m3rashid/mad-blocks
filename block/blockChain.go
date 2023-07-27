@@ -1,7 +1,8 @@
-package main
+package block
 
 import (
 	"fmt"
+	"mad-blocks/utils"
 	"strings"
 )
 
@@ -44,8 +45,8 @@ func (bc *BlockChain) LastBlock() *Block {
 	return bc.Chain[len(bc.Chain)-1]
 }
 
-func (bc *BlockChain) Mining(defaultParams DefaultFuncParams) bool {
-	bc.AddTransaction(MINING_SENDER, bc.Address, MINING_REWARD)
+func (bc *BlockChain) Mining(defaultParams utils.DefaultFuncParams) bool {
+	bc.AddTransaction(utils.MINING_SENDER, bc.Address, utils.MINING_REWARD)
 	nonce := bc.ProofOfWork(defaultParams)
 	previousHash := bc.LastBlock().hash()
 	bc.createBlock(nonce, previousHash)

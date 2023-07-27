@@ -1,7 +1,8 @@
-package main
+package block
 
 import (
 	"fmt"
+	"mad-blocks/utils"
 	"strings"
 	"time"
 )
@@ -14,7 +15,7 @@ func (bc *BlockChain) copyTransactionPool() []*Transaction {
 	return transactions
 }
 
-func (bc *BlockChain) validProof(nonce int, previousHash [32]byte, transactions []*Transaction, difficulty int, defaultParams DefaultFuncParams) bool {
+func (bc *BlockChain) validProof(nonce int, previousHash [32]byte, transactions []*Transaction, difficulty int, defaultParams utils.DefaultFuncParams) bool {
 	zeroes := strings.Repeat("0", difficulty)
 	guessBlock := Block{
 		Timestamp:    0,
@@ -30,12 +31,12 @@ func (bc *BlockChain) validProof(nonce int, previousHash [32]byte, transactions 
 	return matched
 }
 
-func (bc *BlockChain) ProofOfWork(defaultParams DefaultFuncParams) int {
+func (bc *BlockChain) ProofOfWork(defaultParams utils.DefaultFuncParams) int {
 	startTime := time.Now()
 	transactions := bc.copyTransactionPool()
 	previousHash := bc.LastBlock().hash()
 	nonce := 0
-	for !bc.validProof(nonce, previousHash, transactions, MINING_DIFFICULTY, defaultParams) {
+	for !bc.validProof(nonce, previousHash, transactions, utils.MINING_DIFFICULTY, defaultParams) {
 		nonce += 1
 	}
 	if defaultParams.Verbose {

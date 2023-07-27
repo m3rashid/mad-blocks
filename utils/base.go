@@ -1,4 +1,4 @@
-package main
+package utils
 
 const (
 	MINING_DIFFICULTY = 4
