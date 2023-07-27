@@ -3,41 +3,90 @@
   <head>
     <meta charset="UTF-8" />
     <title>Wallet</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
-      $(function () {
-        $.ajax({
-          url: '/wallet',
-          type: 'POST',
-          success: function (response) {
-            response = JSON.parse(response);
-            $('#public_key').val(response['publicKey']);
-            $('#private_key').val(response['privateKey']);
-            $('#blockchain_address').val(response['blockchainAddress']);
-            console.info(response);
-          },
-          error: function (error) {
-            console.error(error);
-          },
+      window.onload = function () {
+        const publicKeyInput = document.getElementById('publicKey');
+        const privateKeyInput = document.getElementById('privateKey');
+        const senderAddressInput = document.getElementById('senderAddress');
+        const submitBtn = document.getElementById('send_money_button');
+        const amountInput = document.getElementById('send_amount');
+        const recipientAddress = document.getElementById(
+          'recipient_blockchain_address'
+        );
+
+        fetch('/wallet', {
+          method: 'POST',
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error('Error in getting wallet');
+            return res.json();
+          })
+          .then((res) => {
+            senderAddressInput.innerHTML = res.address;
+            publicKeyInput.innerHTML = res.publicKey;
+            privateKeyInput.innerHTML = res.privateKey;
+          })
+          .catch(console.log);
+
+        submitBtn.addEventListener('click', () => {
+          const body = {
+            senderPrivateKey: privateKeyInput.innerHTML,
+            senderAddress: senderAddressInput.innerHTML,
+            recipientAddress: recipientAddress.value,
+            senderPublicKey: publicKeyInput.innerHTML,
+            value: amountInput.value,
+          };
+
+          fetch('/transaction', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          })
+            .then((res) => {
+              if (!res.ok) throw new Error('Error in getting wallet');
+              return res.json();
+            })
+            .then((res) => {
+              if (res.message === 'success') {
+                window.alert('Transaction Successful');
+              } else window.alert('Transaction Failed');
+            })
+            .catch(console.log);
         });
-      });
+      };
     </script>
+
+    <style>
+      body {
+        font-family: monospace;
+      }
+    </style>
   </head>
   <body>
     <div>
       <h1>Wallet</h1>
-      <div id="wallet_amount">0</div>
+      <span id="wallet_amount">0</span> &nbsp;&nbsp;
       <button id="reload_wallet">Reload Wallet</button>
 
-      <p>Public Key</p>
-      <textarea id="public_key" rows="2" cols="100"></textarea>
+      <br />
+      <br />
 
-      <p>Private Key</p>
-      <textarea id="private_key" rows="1" cols="100"></textarea>
+      <span>Public Key : </span>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span id="publicKey" rows="2" cols="100"></span>
+      <br />
 
-      <p>Blockchain Address</p>
-      <textarea id="blockchain_address" rows="1" cols="100"></textarea>
+      <span>Private Key : </span>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span id="privateKey" rows="1" cols="100"></span>
+      <br />
+
+      <span>Blockchain Address</span> &nbsp;&nbsp;
+      <span id="senderAddress" rows="1" cols="100"></span>
     </div>
+
+    <br />
+    <br />
 
     <div>
       <h1>Send Money</h1>
@@ -45,7 +94,9 @@
         Address:
         <input id="recipient_blockchain_address" size="100" type="text" />
         <br />
-        Amount: <input id="send_amount" type="text" />
+        <br />
+        Amount: &nbsp;<input id="send_amount" type="text" />
+        <br />
         <br />
         <button id="send_money_button">Send</button>
       </div>
