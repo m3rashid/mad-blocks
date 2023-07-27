@@ -42,7 +42,7 @@
       <h1>Send Money</h1>
       <div>
         Address:
-        <input id="recipient_blockchain_address" size="100" type="text" />
+        <input id="recipient_address" size="100" type="text" />
         <br />
         <br />
         Amount: &nbsp;<input id="send_amount" type="text" />
@@ -53,16 +53,14 @@
     </div>
 
     <script defer>
+      const amountInput = document.getElementById('send_amount');
       const publicKeyInput = document.getElementById('publicKey');
       const privateKeyInput = document.getElementById('privateKey');
-      const senderAddressInput = document.getElementById('senderAddress');
-      const submitBtn = document.getElementById('send_money_button');
-      const amountInput = document.getElementById('send_amount');
       const walletAmount = document.getElementById('wallet_amount');
+      const submitBtn = document.getElementById('send_money_button');
       const reloadWalletBtn = document.getElementById('reload_wallet');
-      const recipientAddress = document.getElementById(
-        'recipient_blockchain_address'
-      );
+      const senderAddressInput = document.getElementById('senderAddress');
+      const recipientAddress = document.getElementById('recipient_address');
 
       fetch('/wallet', { method: 'POST' })
         .then((res) => {
@@ -102,7 +100,7 @@
           .catch(console.log);
       });
 
-      reloadWalletBtn.addEventListener('click', () => {
+      const reloadWallet = () => {
         const walletAddress = senderAddressInput.innerHTML;
         fetch(`/wallet/amount?address=${walletAddress}`, { method: 'GET' })
           .then((res) => {
@@ -115,7 +113,10 @@
             } else walletAmount.innerHTML = 0;
           })
           .catch(console.log);
-      });
+      };
+
+      setTimeout(reloadWallet, 20_000);
+      reloadWalletBtn.addEventListener('click', reloadWallet);
     </script>
   </body>
 </html>
