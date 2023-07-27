@@ -44,10 +44,28 @@ func (bc *BlockChain) LastBlock() *Block {
 	return bc.Chain[len(bc.Chain)-1]
 }
 
-func (bc *BlockChain) Mining() bool {
+func (bc *BlockChain) Mining(defaultParams DefaultFuncParams) bool {
 	bc.AddTransaction(MINING_SENDER, bc.Address, MINING_REWARD)
-	nonce := bc.ProofOfWork()
+	nonce := bc.ProofOfWork(defaultParams)
 	previousHash := bc.LastBlock().hash()
 	bc.createBlock(nonce, previousHash)
 	return true
+}
+
+func (bc *BlockChain) CalculateTotalAmount(address string) float32 {
+	var totalAmount float32 = 0.0
+	for _, b := range bc.Chain {
+		for _, t := range b.Transactions {
+			value := t.Value
+			if address == t.Recipient {
+				totalAmount += value
+			}
+
+			if address == t.Sender {
+				totalAmount -= value
+			}
+		}
+	}
+
+	return totalAmount
 }

@@ -14,7 +14,7 @@ func (bc *BlockChain) copyTransactionPool() []*Transaction {
 	return transactions
 }
 
-func (bc *BlockChain) validProof(nonce int, previousHash [32]byte, transactions []*Transaction, difficulty int) bool {
+func (bc *BlockChain) validProof(nonce int, previousHash [32]byte, transactions []*Transaction, difficulty int, defaultParams DefaultFuncParams) bool {
 	zeroes := strings.Repeat("0", difficulty)
 	guessBlock := Block{
 		Timestamp:    0,
@@ -24,20 +24,22 @@ func (bc *BlockChain) validProof(nonce int, previousHash [32]byte, transactions 
 	}
 	guessHash := fmt.Sprintf("%x", guessBlock.hash())
 	matched := guessHash[:difficulty] == zeroes
-	if matched {
+	if matched && defaultParams.Verbose {
 		fmt.Printf("Matched HASH: %s\n", guessHash)
 	}
 	return matched
 }
 
-func (bc *BlockChain) ProofOfWork() int {
+func (bc *BlockChain) ProofOfWork(defaultParams DefaultFuncParams) int {
 	startTime := time.Now()
 	transactions := bc.copyTransactionPool()
 	previousHash := bc.LastBlock().hash()
 	nonce := 0
-	for !bc.validProof(nonce, previousHash, transactions, MINING_DIFFICULTY) {
+	for !bc.validProof(nonce, previousHash, transactions, MINING_DIFFICULTY, defaultParams) {
 		nonce += 1
 	}
-	fmt.Printf("Proof Calculation Took : %s\n\n", time.Since(startTime))
+	if defaultParams.Verbose {
+		fmt.Printf("Proof Calculation Took : %s\n\n", time.Since(startTime))
+	}
 	return nonce
 }
