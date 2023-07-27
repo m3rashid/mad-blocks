@@ -22,7 +22,7 @@ func newBlock(nonce int, previousHash string) *Block {
 }
 
 func (b *Block) Print() {
-	fmt.Printf("nonce:\t%d\n", b.nonce)
+	fmt.Printf("nonce:\t\t%d\n", b.nonce)
 	fmt.Printf("previousHash:\t%s\n", b.previousHash)
 	fmt.Printf("transactions:\t%s\n", b.transactions)
 	fmt.Printf("timestamp:\t%d\n", b.timestamp)
