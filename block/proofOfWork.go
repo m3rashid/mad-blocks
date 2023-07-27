@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"mad-blocks/utils"
 	"strings"
-	"time"
 )
 
 func (bc *BlockChain) VerifyTransactionSignature(
@@ -25,7 +24,6 @@ func (bc *BlockChain) validProof(
 	previousHash [32]byte,
 	transactions []*Transaction,
 	difficulty int,
-	defaultParams utils.DefaultFuncParamsType,
 ) bool {
 	zeroes := strings.Repeat("0", difficulty)
 	guessBlock := Block{
@@ -35,26 +33,16 @@ func (bc *BlockChain) validProof(
 		transactions: transactions,
 	}
 	guessHash := fmt.Sprintf("%x", guessBlock.Hash())
-	matched := guessHash[:difficulty] == zeroes
-	if matched && defaultParams.Verbose {
-		fmt.Printf("Matched HASH: %s\n", guessHash)
-	}
-	return matched
+	return guessHash[:difficulty] == zeroes
 }
 
-func (bc *BlockChain) ProofOfWork(defaultParams utils.DefaultFuncParamsType) int {
-	startTime := time.Now()
-
+func (bc *BlockChain) ProofOfWork() int {
 	nonce := 0
 	transactions := bc.copyTransactionPool()
 	previousHash := bc.LastBlock().Hash()
 
-	for !bc.validProof(nonce, previousHash, transactions, utils.MINING_DIFFICULTY, defaultParams) {
+	for !bc.validProof(nonce, previousHash, transactions, utils.MINING_DIFFICULTY) {
 		nonce = nonce + 1
-	}
-
-	if defaultParams.Verbose {
-		fmt.Printf("Proof Calculation Took : %s\n\n", time.Since(startTime))
 	}
 
 	return nonce

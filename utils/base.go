@@ -6,11 +6,3 @@ const (
 	MINING_REWARD     = 0.5
 	VERBOSE           = true
 )
-
-type DefaultFuncParamsType struct {
-	Verbose bool `json:"verbose"`
-}
-
-var DefaultFuncParams = DefaultFuncParamsType{
-	Verbose: false,
-}

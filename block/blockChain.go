@@ -46,9 +46,9 @@ func (bc *BlockChain) copyTransactionPool() []*Transaction {
 	return transactions
 }
 
-func (bc *BlockChain) Mining(defaultParams utils.DefaultFuncParamsType) bool {
+func (bc *BlockChain) Mining() bool {
 	bc.AddTransaction(utils.MINING_SENDER, bc.address, utils.MINING_REWARD, nil, nil)
-	nonce := bc.ProofOfWork(defaultParams)
+	nonce := bc.ProofOfWork()
 	previousHash := bc.LastBlock().Hash()
 	bc.createBlock(nonce, previousHash)
 	return true

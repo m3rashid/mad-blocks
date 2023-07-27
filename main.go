@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"mad-blocks/block"
-	"mad-blocks/utils"
 	"mad-blocks/wallet"
 )
 
@@ -23,7 +22,7 @@ func main() {
 	isAdded := blockchain.AddTransaction(userA.Address(), userB.Address(), 1.0, userA.PublicKey(), t.GenerateSignature())
 	fmt.Println("Added: ", isAdded)
 
-	blockchain.Mining(utils.DefaultFuncParams)
+	blockchain.Mining()
 	blockchain.Print()
 
 	fmt.Println("UserA: ", blockchain.BalanceOf(userA.Address()), "\t", userA.Address())
