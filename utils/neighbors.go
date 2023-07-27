@@ -48,13 +48,15 @@ func FindNeighbors(myHost string, myPort uint16, startIp uint8, endIp uint8, sta
 
 func GetHost() string {
 	hostName, err := os.Hostname()
+	fmt.Println("HOSTNAME: ", hostName)
 	if err != nil {
 		return "127.0.0.1"
 	}
+
 	address, err := net.LookupHost(hostName)
 	if err != nil {
 		return "127.0.0.1"
 	}
-	fmt.Println(address)
+	fmt.Println("ADDRESS: ", hostName)
 	return address[0]
 }

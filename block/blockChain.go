@@ -3,6 +3,7 @@ package block
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"mad-blocks/utils"
 	"strings"
 	"sync"
@@ -33,6 +34,7 @@ func (bc *BlockChain) SetNeighbors() {
 		utils.BLOCKCHAIN_PORT_RANGE_START,
 		utils.BLOCKCHAIN_PORT_RANGE_END,
 	)
+	log.Printf("%v", bc.neighbors)
 }
 
 func (bc *BlockChain) SyncNeighbors() {
@@ -44,7 +46,7 @@ func (bc *BlockChain) SyncNeighbors() {
 
 func (bc *BlockChain) StartSyncNeighbors() {
 	bc.SyncNeighbors()
-	_ = time.AfterFunc(time.Second*utils.NEIGHBORS_SYNC_TIME_SET_SECONDS, bc.StartSyncNeighbors)
+	_ = time.AfterFunc(time.Second*utils.NEIGHBORS_SYNC_TIME_SET_SECONDS, bc.SyncNeighbors)
 }
 
 func (bc *BlockChain) TransactionPool() []*Transaction {
