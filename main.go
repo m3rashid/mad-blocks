@@ -26,7 +26,7 @@ func main() {
 	blockchain.Mining(utils.DefaultFuncParams)
 	blockchain.Print()
 
-	fmt.Println("UserA: ", blockchain.BalanceOf(userA.Address()))
-	fmt.Println("UserB: ", blockchain.BalanceOf(userB.Address()))
-	fmt.Println("Miner: ", blockchain.BalanceOf(miner.Address()))
+	fmt.Println("UserA: ", blockchain.BalanceOf(userA.Address()), "\t", userA.Address())
+	fmt.Println("UserB: ", blockchain.BalanceOf(userB.Address()), "\t", userB.Address())
+	fmt.Println("Miner: ", blockchain.BalanceOf(miner.Address()), "\t", miner.Address())
 }
