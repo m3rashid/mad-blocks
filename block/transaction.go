@@ -23,7 +23,7 @@ func (bc *BlockChain) AddTransaction(
 	sender string,
 	recipient string,
 	value float32,
-	senderPublicKey *ecdsa.PublicKey,
+	publicKey *ecdsa.PublicKey,
 	s *utils.Signature,
 ) bool {
 	t := NewTransaction(sender, recipient, value)
@@ -33,12 +33,12 @@ func (bc *BlockChain) AddTransaction(
 		return true
 	}
 
-	// if bc.BalanceOf(sender) < value {
-	// 	log.Println("Insufficient Balance")
-	// 	return false
-	// }
+	if bc.BalanceOf(sender) < value {
+		log.Println("Insufficient Balance")
+		return false
+	}
 
-	if bc.VerifyTransactionSignature(senderPublicKey, s, t) {
+	if bc.VerifyTransactionSignature(publicKey, s, t) {
 		bc.transactionPool = append(bc.transactionPool, t)
 		return true
 	} else {
@@ -49,20 +49,20 @@ func (bc *BlockChain) AddTransaction(
 }
 
 func (t *Transaction) Print() {
-	fmt.Println(strings.Repeat("-", 50))
+	fmt.Println(strings.Repeat("-", 102))
 	fmt.Printf("Sender: %s, ", t.sender)
 	fmt.Printf("Recipient: %s, ", t.recipient)
 	fmt.Printf("Value: %.1f\n", t.value)
 }
 
-func (tr *Transaction) MarshalJSON() ([]byte, error) {
+func (t *Transaction) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
-		Sender    string  `json:"sender_blockchain_address"`
-		Recipient string  `json:"recipient_blockchain_address"`
+		Sender    string  `json:"sender"`
+		Recipient string  `json:"recipient"`
 		Value     float32 `json:"value"`
 	}{
-		Sender:    tr.sender,
-		Recipient: tr.recipient,
-		Value:     tr.value,
+		Sender:    t.sender,
+		Recipient: t.recipient,
+		Value:     t.value,
 	})
 }

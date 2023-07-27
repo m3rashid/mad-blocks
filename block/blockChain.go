@@ -13,18 +13,18 @@ type BlockChain struct {
 	address         string
 }
 
-func (bc *BlockChain) createBlock(nonce int, previousHash [32]byte) *Block {
+func (bc *BlockChain) CreateBlock(nonce int, previousHash [32]byte) *Block {
 	b := newBlock(nonce, previousHash, bc.transactionPool)
 	bc.chain = append(bc.chain, b)
 	bc.transactionPool = []*Transaction{}
 	return b
 }
 
-func NewBlockChain(blockChainAddress string) *BlockChain {
+func NewBlockChain(address string) *BlockChain {
 	b := &Block{}
 	bc := new(BlockChain)
-	bc.address = blockChainAddress
-	bc.createBlock(0, b.Hash())
+	bc.address = address
+	bc.CreateBlock(0, b.Hash())
 	return bc
 }
 
@@ -34,11 +34,11 @@ func (bc *BlockChain) LastBlock() *Block {
 
 func (bc *BlockChain) AddBlock() *Block {
 	lb := bc.LastBlock()
-	b := bc.createBlock(0, lb.Hash())
+	b := bc.CreateBlock(0, lb.Hash())
 	return b
 }
 
-func (bc *BlockChain) copyTransactionPool() []*Transaction {
+func (bc *BlockChain) CopyTransactionPool() []*Transaction {
 	transactions := make([]*Transaction, 0)
 	for _, t := range bc.transactionPool {
 		transactions = append(transactions, NewTransaction(t.sender, t.recipient, t.value))
@@ -50,7 +50,7 @@ func (bc *BlockChain) Mining() bool {
 	bc.AddTransaction(utils.MINING_SENDER, bc.address, utils.MINING_REWARD, nil, nil)
 	nonce := bc.ProofOfWork()
 	previousHash := bc.LastBlock().Hash()
-	bc.createBlock(nonce, previousHash)
+	bc.CreateBlock(nonce, previousHash)
 	return true
 }
 

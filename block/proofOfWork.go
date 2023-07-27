@@ -15,33 +15,28 @@ func (bc *BlockChain) VerifyTransactionSignature(
 	t *Transaction,
 ) bool {
 	m, _ := json.Marshal(t)
-	hash := sha256.Sum256(m)
-	return ecdsa.Verify(senderPublicKey, hash[:], s.R, s.S)
+	h := sha256.Sum256(m)
+	return ecdsa.Verify(senderPublicKey, h[:], s.R, s.S)
 }
 
-func (bc *BlockChain) validProof(
+func (bc *BlockChain) ValidProof(
 	nonce int,
 	previousHash [32]byte,
 	transactions []*Transaction,
 	difficulty int,
 ) bool {
 	zeroes := strings.Repeat("0", difficulty)
-	guessBlock := Block{
-		timestamp:    0,
-		nonce:        nonce,
-		previousHash: previousHash,
-		transactions: transactions,
-	}
+	guessBlock := Block{nonce, previousHash, 0, transactions}
 	guessHash := fmt.Sprintf("%x", guessBlock.Hash())
 	return guessHash[:difficulty] == zeroes
 }
 
 func (bc *BlockChain) ProofOfWork() int {
 	nonce := 0
-	transactions := bc.copyTransactionPool()
+	transactions := bc.CopyTransactionPool()
 	previousHash := bc.LastBlock().Hash()
 
-	for !bc.validProof(nonce, previousHash, transactions, utils.MINING_DIFFICULTY) {
+	for !bc.ValidProof(nonce, previousHash, transactions, utils.MINING_DIFFICULTY) {
 		nonce = nonce + 1
 	}
 

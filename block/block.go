@@ -10,17 +10,18 @@ import (
 type Block struct {
 	nonce        int
 	previousHash [32]byte
-	transactions []*Transaction
 	timestamp    int64
+	transactions []*Transaction
 }
 
 func newBlock(nonce int, previousHash [32]byte, transactions []*Transaction) *Block {
-	return &Block{
-		nonce:        nonce,
-		previousHash: previousHash,
-		transactions: transactions,
-		timestamp:    time.Now().UnixNano(),
-	}
+	var b Block
+	b.timestamp = time.Now().UnixNano()
+	b.nonce = nonce
+	b.previousHash = previousHash
+	b.transactions = transactions
+
+	return &b
 }
 
 func (b *Block) Print() {

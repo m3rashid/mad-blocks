@@ -20,18 +20,17 @@ func (t *Transaction) GenerateSignature() *utils.Signature {
 	m, _ := json.Marshal(t)
 	h := sha256.Sum256(m)
 	r, s, _ := ecdsa.Sign(rand.Reader, t.senderPrivateKey, h[:])
-
 	return &utils.Signature{R: r, S: s}
 }
 
 func NewTransaction(
-	senderPrivateKey *ecdsa.PrivateKey,
-	senderPublicKey *ecdsa.PublicKey,
+	privateKey *ecdsa.PrivateKey,
+	publicKey *ecdsa.PublicKey,
 	sender string,
 	recipient string,
 	value float32,
 ) *Transaction {
-	return &Transaction{senderPrivateKey, senderPublicKey, sender, recipient, value}
+	return &Transaction{privateKey, publicKey, sender, recipient, value}
 }
 
 func (t *Transaction) MarshalJSON() ([]byte, error) {
