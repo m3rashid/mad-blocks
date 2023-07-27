@@ -11,7 +11,7 @@ func init() {
 
 func main() {
 	port := flag.Uint("port", 8080, "TCP port for wallet server.")
-	gateway := flag.String("g", "0.0.0.0", "TCP port for wallet server.")
+	gateway := flag.String("g", "http://127.0.0.1:5000", "TCP gateway for host server")
 	flag.Parse()
 	ws := NewWalletServer(uint16(*port), *gateway)
 	ws.Run()

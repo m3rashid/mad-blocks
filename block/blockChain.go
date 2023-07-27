@@ -14,6 +14,10 @@ type BlockChain struct {
 	port            uint16
 }
 
+func (bc *BlockChain) TransactionPool() []*Transaction {
+	return bc.transactionPool
+}
+
 func (bc *BlockChain) CreateBlock(nonce int, previousHash [32]byte) *Block {
 	b := newBlock(nonce, previousHash, bc.transactionPool)
 	bc.chain = append(bc.chain, b)

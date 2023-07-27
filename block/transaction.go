@@ -19,6 +19,17 @@ func NewTransaction(sender string, recipient string, value float32) *Transaction
 	return &Transaction{sender, recipient, value}
 }
 
+func (bc *BlockChain) CreateTransaction(
+	sender string,
+	recipient string,
+	value float32,
+	publicKey *ecdsa.PublicKey,
+	s *utils.Signature,
+) bool {
+	isTransactionValid := bc.AddTransaction(sender, recipient, value, publicKey, s)
+	return isTransactionValid
+}
+
 func (bc *BlockChain) AddTransaction(
 	sender string,
 	recipient string,

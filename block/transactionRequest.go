@@ -1,11 +1,11 @@
 package block
 
 type TransactionRequest struct {
-	SenderAddress    *string `json:"senderAddress"`
-	RecipientAddress *string `json:"recipientAddress"`
-	SenderPublicKey  *string `json:"senderPublicKey"`
-	Signature        *string `json:"signature"`
-	Value            *string `json:"value"`
+	SenderAddress    *string  `json:"senderAddress"`
+	RecipientAddress *string  `json:"recipientAddress"`
+	SenderPublicKey  *string  `json:"senderPublicKey"`
+	Signature        *string  `json:"signature"`
+	Value            *float32 `json:"value"`
 }
 
 func (t *TransactionRequest) Validate() bool {

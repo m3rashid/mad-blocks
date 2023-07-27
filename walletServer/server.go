@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -94,11 +95,11 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, req *http.Reque
 			RecipientAddress: t.RecipientAddress,
 			SenderPublicKey:  t.SenderPublicKey,
 			Signature:        &signatureStr,
-			Value:            t.Value,
+			Value:            &value32,
 		}
 		m, _ := json.Marshal(bt)
 		buffer := bytes.NewBuffer(m)
-		resp, err := http.Post(ws.Gateway()+"/transaction", "application/json", buffer)
+		resp, err := http.Post(ws.Gateway()+"/transactions", "application/json", buffer)
 		if err != nil {
 			log.Println("ERROR: Cannot Post Transaction due to API error")
 			io.WriteString(w, utils.JsonStatus("fail"))
@@ -106,9 +107,10 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, req *http.Reque
 		}
 
 		if resp.StatusCode == http.StatusCreated {
-			io.WriteString(w, utils.JsonStatus("Success"))
+			io.WriteString(w, utils.JsonStatus("success"))
 			return
 		} else {
+			fmt.Println(resp.Body)
 			log.Println("ERROR: Cannot Create Transaction on API")
 			io.WriteString(w, utils.JsonStatus("fail"))
 			return
@@ -124,6 +126,5 @@ func (ws *WalletServer) Run() {
 	http.HandleFunc("/", ws.Index)
 	http.HandleFunc("/wallet", ws.Wallet)
 	http.HandleFunc("/transaction", ws.CreateTransaction)
-
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(ws.Port())), nil))
 }
