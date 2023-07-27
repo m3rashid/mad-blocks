@@ -15,24 +15,8 @@ type Transaction struct {
 	value     float32
 }
 
-func (tr *Transaction) MarshalJSON() ([]byte, error) {
-	return json.Marshal(struct {
-		Sender    string  `json:"sender_blockchain_address"`
-		Recipient string  `json:"recipient_blockchain_address"`
-		Value     float32 `json:"value"`
-	}{
-		Sender:    tr.sender,
-		Recipient: tr.recipient,
-		Value:     tr.value,
-	})
-}
-
 func NewTransaction(sender string, recipient string, value float32) *Transaction {
-	return &Transaction{
-		sender:    sender,
-		recipient: recipient,
-		value:     value,
-	}
+	return &Transaction{sender, recipient, value}
 }
 
 func (bc *BlockChain) AddTransaction(
@@ -40,7 +24,7 @@ func (bc *BlockChain) AddTransaction(
 	recipient string,
 	value float32,
 	senderPublicKey *ecdsa.PublicKey,
-	signature *utils.Signature,
+	s *utils.Signature,
 ) bool {
 	t := NewTransaction(sender, recipient, value)
 
@@ -54,13 +38,14 @@ func (bc *BlockChain) AddTransaction(
 	// 	return false
 	// }
 
-	if bc.VerifyTransactionSignature(senderPublicKey, signature, t) {
+	if bc.VerifyTransactionSignature(senderPublicKey, s, t) {
 		bc.transactionPool = append(bc.transactionPool, t)
 		return true
 	} else {
-		log.Println("Cannot Verify Transaction")
-		return false
+		log.Println("ERROR: Cannot Verify Transaction")
 	}
+
+	return false
 }
 
 func (t *Transaction) Print() {
@@ -68,4 +53,16 @@ func (t *Transaction) Print() {
 	fmt.Printf("Sender: %s, ", t.sender)
 	fmt.Printf("Recipient: %s, ", t.recipient)
 	fmt.Printf("Value: %.1f\n", t.value)
+}
+
+func (tr *Transaction) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Sender    string  `json:"sender_blockchain_address"`
+		Recipient string  `json:"recipient_blockchain_address"`
+		Value     float32 `json:"value"`
+	}{
+		Sender:    tr.sender,
+		Recipient: tr.recipient,
+		Value:     tr.value,
+	})
 }

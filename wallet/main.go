@@ -18,23 +18,10 @@ type Wallet struct {
 	address    string
 }
 
-func (w *Wallet) MarshalJSON() ([]byte, error) {
-	return json.Marshal(struct {
-		PrivateKey        string `json:"privateKey"`
-		PublicKey         string `json:"publicKey"`
-		BlockchainAddress string `json:"blockchainAddress"`
-	}{
-		PrivateKey:        w.PrivateKeyStr(),
-		PublicKey:         w.PublicKeyStr(),
-		BlockchainAddress: w.address,
-	})
-}
-
 func NewWallet() *Wallet {
 	w := new(Wallet)
 	privateKey, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	w.privateKey = privateKey
-
 	w.publicKey = &w.privateKey.PublicKey
 
 	// 2. Perform SHA256 hashing on the public key (32 bytes)
@@ -96,4 +83,16 @@ func (w *Wallet) PrivateKeyStr() string {
 
 func (w *Wallet) Address() string {
 	return w.address
+}
+
+func (w *Wallet) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		PrivateKey        string `json:"privateKey"`
+		PublicKey         string `json:"publicKey"`
+		BlockchainAddress string `json:"blockchainAddress"`
+	}{
+		PrivateKey:        w.PrivateKeyStr(),
+		PublicKey:         w.PublicKeyStr(),
+		BlockchainAddress: w.address,
+	})
 }
