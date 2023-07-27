@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"mad-blocks/utils"
 	"strings"
+	"sync"
+	"time"
 )
 
 type BlockChain struct {
@@ -12,6 +14,7 @@ type BlockChain struct {
 	chain           []*Block
 	address         string
 	port            uint16
+	mux             sync.Mutex
 }
 
 func (bc *BlockChain) TransactionPool() []*Transaction {
@@ -53,11 +56,24 @@ func (bc *BlockChain) CopyTransactionPool() []*Transaction {
 }
 
 func (bc *BlockChain) Mining() bool {
+	bc.mux.Lock()
+	defer bc.mux.Unlock()
+
+	if len(bc.transactionPool) == 0 {
+		fmt.Println("No Transactions to Mine")
+		return false
+	}
+
 	bc.AddTransaction(utils.MINING_SENDER, bc.address, utils.MINING_REWARD, nil, nil)
 	nonce := bc.ProofOfWork()
 	previousHash := bc.LastBlock().Hash()
 	bc.CreateBlock(nonce, previousHash)
 	return true
+}
+
+func (bc *BlockChain) StartMining() {
+	bc.Mining()
+	_ = time.AfterFunc(time.Second*utils.MINING_TIMER_SECONDS, bc.StartMining)
 }
 
 func (bc *BlockChain) BalanceOf(address string) float32 {

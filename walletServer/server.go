@@ -122,9 +122,52 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, req *http.Reque
 	}
 }
 
+func (ws *WalletServer) WalletAmount(w http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	case http.MethodGet:
+		blockChainAddress := req.URL.Query().Get("address")
+		endpoint := ws.Gateway() + "/amount"
+		client := http.Client{}
+		bcsReq, _ := http.NewRequest(http.MethodGet, endpoint, nil)
+		q := bcsReq.URL.Query()
+		q.Add("address", blockChainAddress)
+		bcsReq.URL.RawQuery = q.Encode()
+
+		res, err := client.Do(bcsReq)
+		if err != nil {
+			log.Println("ERROR: Cannot Get Amount due to API error")
+			io.WriteString(w, utils.JsonStatus("fail"))
+			return
+		}
+
+		w.Header().Add("Content-Type", "application/json")
+		if res.StatusCode == http.StatusOK {
+			decoder := json.NewDecoder(res.Body)
+			var bar block.AmountResponse
+			if err := decoder.Decode(&bar); err != nil {
+				log.Println("ERROR: Cannot Decode AmountResponse")
+				io.WriteString(w, utils.JsonStatus("fail"))
+				return
+			}
+			m, _ := json.Marshal(struct {
+				Amount  float32 `json:"amount"`
+				Message string  `json:"message"`
+			}{Amount: bar.Amount, Message: "success"})
+			io.WriteString(w, string(m[:]))
+		} else {
+			io.WriteString(w, utils.JsonStatus("fail"))
+		}
+
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("ERROR: Invalid HTTP Method")
+	}
+}
+
 func (ws *WalletServer) Run() {
 	http.HandleFunc("/", ws.Index)
 	http.HandleFunc("/wallet", ws.Wallet)
+	http.HandleFunc("/wallet/amount", ws.WalletAmount)
 	http.HandleFunc("/transaction", ws.CreateTransaction)
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(ws.Port())), nil))
 }

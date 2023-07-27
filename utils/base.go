@@ -6,10 +6,11 @@ import (
 )
 
 const (
-	MINING_DIFFICULTY = 4
-	MINING_SENDER     = "MadBlocks"
-	MINING_REWARD     = 0.5
-	VERBOSE           = true
+	MINING_DIFFICULTY    = 4
+	MINING_SENDER        = "MadBlocks"
+	MINING_REWARD        = 0.5
+	VERBOSE              = true
+	MINING_TIMER_SECONDS = 20
 )
 
 func JsonStatus(message string) string {
