@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"mad-blocks/utils"
+	"net/http"
 	"strings"
 	"sync"
 	"time"
@@ -22,6 +23,7 @@ type BlockChain struct {
 
 func (bc *BlockChain) Run() {
 	bc.StartSyncNeighbors()
+	bc.ResolveConflicts()
 }
 
 func (bc *BlockChain) SetNeighbors() {
@@ -103,6 +105,15 @@ func (bc *BlockChain) Mining() bool {
 	nonce := bc.ProofOfWork()
 	previousHash := bc.LastBlock().Hash()
 	bc.CreateBlock(nonce, previousHash)
+
+	for _, n := range bc.neighbors {
+		endpoint := fmt.Sprintf("http://%s/consensus", n)
+		client := &http.Client{}
+		req, _ := http.NewRequest(http.MethodPut, endpoint, nil)
+		resp, _ := client.Do(req)
+		log.Printf("%v", resp)
+	}
+
 	return true
 }
 
