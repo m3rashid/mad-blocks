@@ -44,10 +44,10 @@ func (bc *BlockChain) AddTransaction(
 		return true
 	}
 
-	// if bc.BalanceOf(sender) < value {
-	// 	log.Println("Insufficient Balance")
-	// 	return false
-	// }
+	if bc.BalanceOf(sender) < value {
+		log.Println("Insufficient Balance")
+		return false
+	}
 
 	if bc.VerifyTransactionSignature(publicKey, s, t) {
 		bc.transactionPool = append(bc.transactionPool, t)

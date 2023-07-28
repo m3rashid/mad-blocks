@@ -9,14 +9,15 @@ A blockchain implementation in Go
 - Proof of work
 - Transactions
 - Validate Transactions
-- Mining
+- Currency Mining
 - User and Wallet maintenance
 - Secure hashing and signing implementation (w.r.t. Bitcoin Blockchain standards) with SHA256 and ECDSA algorithms
-- Implementation of consensus algorithm over multi-node
-- Surrounding neighbor blockchains discovery based on internal network and subnet mask
+- Discovery and heartbeat sync of surrounding neighbor blockchains based on internal network and subnet mask
+- Implementation of consensus algorithm over multiple nodes in the network
 
 #### Other Features
 
 - Written with keeping in mind, the atomic transactions, using Mutex Locks.
 - Highly performant and Concurrent by default (written in go)
--
+- Modular code with separation of concerns
+- Configurable servers
