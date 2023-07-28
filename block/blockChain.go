@@ -52,6 +52,10 @@ func (bc *BlockChain) TransactionPool() []*Transaction {
 	return bc.transactionPool
 }
 
+func (bc *BlockChain) Chain() []*Block {
+	return bc.chain
+}
+
 func (bc *BlockChain) CreateBlock(nonce int, previousHash [32]byte) *Block {
 	b := newBlock(nonce, previousHash, bc.transactionPool)
 	bc.chain = append(bc.chain, b)
@@ -126,7 +130,7 @@ func (bc *BlockChain) BalanceOf(address string) float32 {
 
 func (bc *BlockChain) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
-		Blocks []*Block `json:"chains"`
+		Blocks []*Block `json:"chain"`
 	}{
 		Blocks: bc.chain,
 	})
@@ -139,4 +143,15 @@ func (bc *BlockChain) Print() {
 	}
 	fmt.Println()
 	fmt.Println()
+}
+
+func (bc *BlockChain) UnMarshalJSON(data []byte) error {
+	x := &struct {
+		Blocks *[]*Block `json:"chain"`
+	}{Blocks: &bc.chain}
+
+	if err := json.Unmarshal(data, &x); err != nil {
+		return err
+	}
+	return nil
 }

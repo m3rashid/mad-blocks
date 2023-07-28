@@ -77,3 +77,20 @@ func (t *Transaction) MarshalJSON() ([]byte, error) {
 		Value:     t.value,
 	})
 }
+
+func (t *Transaction) UnMarshalJSON(data []byte) error {
+	x := &struct {
+		Sender    *string  `json:"sender"`
+		Recipient *string  `json:"recipient"`
+		Value     *float32 `json:"value"`
+	}{
+		Sender:    &t.sender,
+		Recipient: &t.recipient,
+		Value:     &t.value,
+	}
+
+	if err := json.Unmarshal(data, &x); err != nil {
+		return err
+	}
+	return nil
+}
