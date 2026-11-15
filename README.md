@@ -1,23 +1,28 @@
-### MAD BLOCKS
+# MAD BLOCKS
 
-A blockchain implementation in Go
+A full blockchain implementation in Go.
 
-#### Arenas Covered
+## Tech
 
-- Block Creation
-- Blockchain creation and verification
-- Proof of work
-- Transactions
-- Validate Transactions
-- Currency Mining
-- User and Wallet maintenance
-- Secure hashing and signing implementation (w.r.t. Bitcoin Blockchain standards) with SHA256 and ECDSA algorithms
-- Discovery and heartbeat sync of surrounding neighbor blockchains based on internal network and subnet mask
-- Implementation of consensus algorithm over multiple nodes in the network
+Go · SHA256 · ECDSA · TCP (P2P)
 
-#### Other Features
+## Features
 
-- Written with keeping in mind, the atomic transactions, using Mutex Locks.
-- Highly performant and Concurrent by default (written in go)
-- Modular code with separation of concerns
-- Configurable servers
+- Block creation & chain verification
+- Proof of Work
+- Transactions & validation
+- Currency mining & wallets (ECDSA)
+- P2P discovery, heartbeat sync, consensus across nodes
+- Mutex-guarded atomic transactions
+
+## Quick start
+
+```bash
+git clone https://github.com/m3rashid/mad-blocks.git
+cd mad-blocks
+go run test.go
+```
+
+## License
+
+MIT
